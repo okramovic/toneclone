@@ -1,0 +1,33 @@
+body{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+p{
+  margin: 10px;
+}
+button{
+  width: 200px;
+  height: 80px;
+  font-size: 30px;
+  max-width: 40vw;
+}
+input[type="text"]{
+  width: 500px;
+  max-width: 100vw;
+  height: 80px;
+  font-size: 30px;
+  text-align: center;
+}
+
+canvas{
+  border-bottom: 2px solid green;
+  border-top: 2px solid green;
+}
+
+.active{
+  background-color: #aaa;
+}
+*:active, *:focus{
+  outline:none;
+}
