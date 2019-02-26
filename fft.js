@@ -5,7 +5,7 @@ function FFT1(data) {
     if (! data || !data.length) console.error('no data for FFT', data)
   
     //data = data.slice(0,data.length/2) // get rid of mirroring effect of fft spectrum ?
-    console.log('   fft d.len', data.length)
+    //console.log('   fft d.len', data.length)
     var N = data.length;
     var frequencies = [];
 

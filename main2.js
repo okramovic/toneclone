@@ -126,7 +126,7 @@ function draw(){
             const y = map(j, 0, binCount, height, 0),
             amp = ffts[f].avgAmp
             
-            if (i==0) console.log('   ', parseInt(f), j, 'y', y, amp)
+            //if (i==0) console.log('   ', parseInt(f), j, 'y', y, amp)
             
             const darkness = map(amp, 0, 0.025, 255,0)  // strongest amps are dark
             stroke(darkness)
@@ -138,7 +138,7 @@ function draw(){
           
       }
       noLoop()
-      console.log('finished drawing resampled', Object.keys(snapshots[0]))
+      //console.log('finished drawing resampled', Object.keys(snapshots[0]))
     }
 }
 
@@ -265,7 +265,7 @@ function reSample(audioBuffer, targetSampleRate) {
 
 function analyseResampled(audioBuf){
   
-    const slices = [], sR = audioBuf.sampleRate / (1000/toneLen)   // get sample for every quarter of second
+    const slices = [], sR = audioBuf.sampleRate / (1000/(toneLen/2))   // get sample for every quarter of second
           ,data = audioBuf.getChannelData(0)
     
     // should i keep or discard last slice??? it seems impossible to get enough fft data if slice is short which cant be predicted
@@ -295,7 +295,7 @@ function analyseResampled(audioBuf){
         const freqs = FFT1(slices[i])
         snap_local.push(freqs)
         console.log('   snap_local i:', i)
-        if (!i) console.log('fft', freqs)
+        //if (!i) console.log('fft', freqs)
     }
     console.timeEnd('test')
     console.log('snap_local', snap_local )
@@ -336,6 +336,7 @@ function analyseResampled(audioBuf){
           // find to what bin f belongs to = lower and upper freq and add f's amp to it
           bins[lower].count ++
           bins[lower].amp += amp
+          bins[lower].f = f
       })
       // average each bins amp
       Object.keys(bins).map(f=>{ bins[f].avgAmp = bins[f].amp/bins[f].count || 0 })  // 0 to prevent NaN as avg in last bin
@@ -347,6 +348,23 @@ function analyseResampled(audioBuf){
     console.log('freqBins', freqBins)
   
     snapshots = freqBins
+  
+    freqBins.map((bin,i)=>{
+        const amps = Object.entries(bin).map(data=> data[1].avgAmp )
+        //if (!i) console.log('amps', amps)
+      
+        const mx = Math.max(...amps)
+        
+      
+        const maxObjs = Object.entries(bin).map(data=>data[1])
+        .map(data=> data.avgAmp===mx ? data : null) // how many max vals are there?
+        .filter(v=>v)
+        .sort((a,b)=> b.avgAmp-a.avgAmp)
+        console.log(maxObjs[0].f, 'max', mx)
+        const [lower, upper] = getBinBoundaries(maxObjs[0].f)
+        console.log('   ',lower,upper)
+        console.log('->', dict[lower])
+    })
   
   function getBinBoundaries(f){
     const upper = freqs.find(num=>num>f)
